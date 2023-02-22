@@ -7,6 +7,7 @@ import flightDataCSV from "../data1.csv";
 
 import HomePage from '../pages/Dashboard.component';
 import { useRecoilState } from 'recoil';
+import BarChart from './charts/BarChart.component';
 
 
 const Container = () => {
@@ -40,8 +41,13 @@ const Container = () => {
   return (
     <div className="container relative mx-auto bg-white h-screen p-2">
       <h1 className="text-3xl text-center font-bold underline">SG Analytics</h1>
-      {
+      {/**
         flightData && (<HomePage />)
+         */
+      }
+
+      {
+        flightData && (<BarChart />)
       }
     </div>
   )

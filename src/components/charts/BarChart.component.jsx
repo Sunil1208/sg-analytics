@@ -1,4 +1,10 @@
 import React from 'react';
+import { useRecoilValue } from 'recoil';
+import { flightDataState } from '../../services/atoms.services';
+import { getOriginCount } from '../../utils/common.utils';
+import * as d3 from "d3";
+
+
 import "../../styles/styles.common.css"
 
 
@@ -8,11 +14,31 @@ const subtitleLabel = "Total number of flights by origin city";
 
 export const BarChart = () => {
 
-    const xValue = (d) => Number(d.Distance);
-    const bottomAxisLabel = "Distance";
+    const flightData = useRecoilValue(flightDataState);
 
-    const yValue = (d) => Number(d.AirTime);
-    const leftAxisLabel = "Flight Time";
+    const originCount = getOriginCount(flightData);
+
+    const bottomAxisLabel = "Orign City";
+    const leftAxisLabel = "Number of flights";
+
+    const width = 900;
+  const height = 450;
+    const margin = { top: 20, right: 20, bottom: 20, left: 100 };
+    const innerHeight = height - margin.top - margin.bottom;
+    const innerWidth = width - margin.right - margin.left;
+
+
+    
+    const yScale = d3
+    .scaleBand()
+    .domain(originCount.map((d) => d.origin))
+    .range([0, innerHeight]);
+
+  const xScale = d3
+    .scaleLinear()
+    .domain([0, d3.max(originCount, (d) => d.count)])
+    .range([0, innerWidth]);
+
 
   return (
     <div>
@@ -21,38 +47,43 @@ export const BarChart = () => {
         <div id="subtitle">{subtitleLabel}</div>
         <div id="left-axis-label">{leftAxisLabel}</div>
         <div id="bottom-axis-label">{bottomAxisLabel}</div>
-        
-        <svg id="svg" width={width} height={height}>
-          <g transform={`translate(${margin.left}, ${margin.top})`}>
-            <g id="y-axis" className="y-axis">
-              <AxisLeft
-                yScale={yScale}
-                innerWidth={innerWidth}
-                // yAxisTickFormat={yAxisTickFormat}
-                tickOffset={20}
-              />
-            </g>
-            <g id="x-axis" className="x-axis">
-              <AxisBottom
-                xScale={xScale}
-                innerHeight={innerHeight}
-                tickOffset={8}
-              />
-            </g>
-            <Marks
-              data={flightData}
-              xScale={xScale}
-              xValue={xValue}
-              yScale={yScale}
-              yValue={yValue}
-              place={place}
-              doping={doping}
-            //   setHoveredValue={setHoveredValue}
-            //   handleMouseMove={handleMouseMove}
-              circleRadius={3}
-            />
+
+        <svg width={width} height={height}>
+      <g transform={`translate(${margin.left}, ${margin.top})`}>
+        {xScale.ticks().map((tickValue) => (
+          <g key={tickValue} transform={`translate(${xScale(tickValue)}, 0)`}>
+            <line y2={innerHeight} stroke="black" />
+            <text
+              dy=".71em"
+              y={innerHeight + 3}
+              style={{ textAnchor: "middle" }}
+            >
+              {tickValue}
+            </text>
           </g>
-        </svg>
+        ))}
+        {yScale.domain().map((tickValue) => (
+          <text
+            key={tickValue}
+            dy=".32em"
+            x={-3}
+            style={{ textAnchor: "end" }}
+            y={yScale(tickValue) + yScale.bandwidth() / 2}
+          >
+            {tickValue}
+          </text>
+        ))}
+        {originCount.map((d) => (
+          <rect
+            key={d.origin}
+            x={0}
+            y={yScale(d.origin)}
+            width={xScale(d.count)}
+            height={yScale.bandwidth()}
+          />
+        ))}
+      </g>
+    </svg>
     </div>
         </div>
   )
