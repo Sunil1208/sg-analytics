@@ -25,4 +25,19 @@ export const getFlightCount = (data) => {
       return Object.entries(flightCountObj).map((item) => {
         return {"flight": item[0], "count": item[1]};
     });
-}
+};
+
+const weekDayMapping = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+export const getAverageWeekDayFlightCount = (data) => {
+  const flightCountObj = data.reduce(function(obj, v) {
+    obj[v.DayOfWeek] = (obj[v.DayOfWeek] || 0) + 1;
+    return obj;
+    // obj[weekDayMapping[v.DayOfWeek]] = 
+  }, {});
+
+  return Object.entries(flightCountObj).map((item) => {
+    console.log("item is ", item);
+    return {weekday: weekDayMapping[Number(item[0] - 1)], weekdayNum: item[0], "count": item[1]};
+  });
+};
