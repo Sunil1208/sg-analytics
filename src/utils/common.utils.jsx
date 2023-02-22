@@ -15,3 +15,14 @@ export const getOriginCount = (data) => {
         return {"origin": item[0], "count": item[1]};
     });
 };
+
+export const getFlightCount = (data) => {
+    const flightCountObj = data.reduce(function(obj, v) {
+        obj[v.FlightNum] = (obj[v.FlightNum] || 0) + 1;
+        return obj;
+      }, {});
+
+      return Object.entries(flightCountObj).map((item) => {
+        return {"flight": item[0], "count": item[1]};
+    });
+}
