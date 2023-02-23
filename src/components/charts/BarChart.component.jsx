@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { filteredflightDataState, flightDataState } from '../../services/atoms.services';
 import { getOriginCount } from '../../utils/common.utils';
@@ -12,8 +12,7 @@ const titleLabel = "Flights by origin city";
 const subtitleLabel = "Total number of flights by origin city";
 
 
-export const BarChart = () => {
-
+export const BarChart = ({handleReset}) => {
     const flightData = useRecoilValue(flightDataState);
     const filteredFlightData = useRecoilValue(filteredflightDataState);
 
@@ -41,6 +40,11 @@ export const BarChart = () => {
     .scaleLinear()
     .domain([0, d3.max(originCount, (d) => d.count)])
     .range([0, innerWidth]);
+
+    useEffect(() => {
+      handleReset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
 
   return (

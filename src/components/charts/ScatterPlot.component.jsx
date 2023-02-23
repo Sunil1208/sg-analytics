@@ -1,6 +1,7 @@
+import { useEffect } from "react";
 import * as d3 from "d3";
-import { useRecoilValue } from "recoil";
-import { filteredflightDataState, flightDataState } from "../../services/atoms.services";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { filteredflightDataState, filterPopUpState, flightDataState } from "../../services/atoms.services";
 
 import "../../styles/styles.common.css";
 
@@ -12,6 +13,9 @@ const subtitleLabel = "Relationship between flight time and flight distance";
 const ScatterPlot = () => {
     const flightData = useRecoilValue(flightDataState);
     const filteredFlightData = useRecoilValue(filteredflightDataState);
+    const [filterPopUpData, setFilterPopUpData] = useRecoilState(filterPopUpState);
+    const setFilteredFlightData = useSetRecoilState(filteredflightDataState);
+
 
     const data = filteredFlightData ? filteredFlightData : flightData;
 
@@ -43,6 +47,26 @@ const xScale = d3
     .nice();
     
     const place = (d) => d.Place;
+
+    const handleReset = () => {
+      setFilterPopUpData({
+        ...filterPopUpData,
+        isOpen: false,
+        appliedFilters: {
+          ...filterPopUpData.appliedFilters,
+          carriers: [],
+          origins: [],
+          startYear: "",
+          endYear: ""
+        }
+      });
+      setFilteredFlightData(undefined);
+    }
+
+    useEffect(() => {
+      handleReset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return(
         <div>

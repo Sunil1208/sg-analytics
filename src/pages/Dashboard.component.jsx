@@ -1,10 +1,10 @@
 import React from "react";
 import ScatterPlot from "../components/charts/ScatterPlot.component";
 
-const HomePage = () => {
+const HomePage = (handleReset) => {
     return (
         <div>
-        <ScatterPlot />
+        <ScatterPlot handleReset={handleReset}/>
         </div>
     )
 };

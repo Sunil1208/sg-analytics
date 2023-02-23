@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Pie from "./common/PieChartSVG.component";
 import { filteredflightDataState, flightDataState } from "../../services/atoms.services";
 import { useRecoilValue } from "recoil";
@@ -8,7 +8,7 @@ import { getFlightCount } from "../../utils/common.utils";
 const titleLabel = "Flights by airline";
 const subtitleLabel = "Percentage of flights by airline";
 
-const PieChart = () => {
+const PieChart = ({handleReset}) => {
     const flightData = useRecoilValue(flightDataState);
     const filteredFlightData = useRecoilValue(filteredflightDataState);
     const data = filteredFlightData ? filteredFlightData : flightData;
@@ -23,6 +23,11 @@ const PieChart = () => {
 
     const flightCount = getFlightCount(data);
     const flightPercentageData = getflightPercentage(flightCount, totalFlightCount);
+
+    useEffect(() => {
+        handleReset();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
   return (
     <div>

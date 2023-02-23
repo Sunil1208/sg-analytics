@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { filteredflightDataState, filterOptionDataState, flightDataState, loaderState, selectedPageState } from '../services/atoms.services';
+import { filteredflightDataState, filterOptionDataState, filterPopUpState, flightDataState, loaderState, selectedPageState } from '../services/atoms.services';
 import { readString } from 'react-papaparse';
 
 import flightDataCSV from "../data1.csv";
@@ -14,16 +14,16 @@ import Filter from './Filter.component';
 import { PAGE_LIST } from '../constants';
 import { getDataForFilters } from '../utils/common.utils';
 
-const renderSelectedPage = (pageKey) => {
+const renderSelectedPage = (pageKey, handleReset) => {
   switch (pageKey) {
     case PAGE_LIST.FLIGHT_DISTANCE_VS_TIME.key:
-      return <HomePage />;
+      return <HomePage handleReset={handleReset} />;
     case PAGE_LIST.FLIGHT_PERCENTAGE_BY_AIRLINE.key:
-        return <PieChart />;
+        return <PieChart handleReset={handleReset} />;
     case PAGE_LIST.TOTAL_FLIGHTS_BY_ORIGIN_CITY.key:
-      return <BarChart />;
+      return <BarChart handleReset={handleReset} />;
     default:
-      return <HomePage />;
+      return <HomePage handleReset={handleReset} />;
   }
 };
 
@@ -33,6 +33,23 @@ const Container = () => {
   const selectedPage = useRecoilValue(selectedPageState);
   const setfilterOptionData = useSetRecoilState(filterOptionDataState);
   const [, setLoading] = useRecoilState(loaderState);
+  const [filterPopUpData, setFilterPopUpData] = useRecoilState(filterPopUpState);
+  const setFilteredFlightData = useSetRecoilState(filteredflightDataState);
+
+  const handleReset = () => {
+    setFilterPopUpData({
+      ...filterPopUpData,
+      isOpen: false,
+      appliedFilters: {
+        ...filterPopUpData.appliedFilters,
+        carriers: [],
+        origins: [],
+        startYear: "",
+        endYear: ""
+      }
+    });
+    setFilteredFlightData(undefined);
+  };
 
   useEffect(() => {
     async function parseCSV(){
@@ -60,7 +77,7 @@ const Container = () => {
 
   console.log("flight data is ", flightData)
 
-  const selectedPageView = renderSelectedPage(selectedPage);
+  const selectedPageView = renderSelectedPage(selectedPage, handleReset);
 
   return (
     <div className="container relative mx-auto bg-white h-screen p-2">
