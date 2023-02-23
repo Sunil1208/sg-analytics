@@ -98,7 +98,6 @@ const FilterDialog = () => {
       isOpen: false
     });
     setFilteredFlightData(filteredResults);
-    console.log("filtered Results are ", filteredResults);
   };
 
   const handleReset = () => {

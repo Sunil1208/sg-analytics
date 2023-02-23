@@ -94,8 +94,6 @@ export const getFilteredData = (data, filters) => {
         );
     })
   }
-
-  console.log("final results are ", result)
   return result;
 
 }
