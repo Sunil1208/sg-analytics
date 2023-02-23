@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { filteredflightDataState, filterPopUpState, flightDataState } from "../../services/atoms.services";
 
 import "../../styles/styles.common.css";
+import Legend from "../Legend.component";
 
 const titleLabel = "Flight Distance vs Flight Time";
 const subtitleLabel = "Relationship between flight time and flight distance";
@@ -68,6 +69,13 @@ const xScale = d3
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    const legendData = [
+      {
+        label: "Total Flights",
+        value: data.length
+      }
+    ]
+
     return(
         <div>
       <div id="viz-container">
@@ -75,6 +83,7 @@ const xScale = d3
         <div id="subtitle">{subtitleLabel}</div>
         <div id="left-axis-label">{leftAxisLabel}</div>
         <div id="bottom-axis-label">{bottomAxisLabel}</div>
+        <Legend innerWidth={innerWidth} innerHeight={innerHeight} data={legendData}/>
         
         <svg id="svg" width={width} height={height}>
           <g transform={`translate(${margin.left}, ${margin.top})`}>
