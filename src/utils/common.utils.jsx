@@ -16,7 +16,7 @@ export const getOriginCount = (data) => {
 
 export const getFlightCount = (data) => {
     const flightCountObj = data.reduce(function(obj, v) {
-        obj[v.FlightNum] = (obj[v.FlightNum] || 0) + 1;
+        obj[v.UniqueCarrier] = (obj[v.UniqueCarrier] || 0) + 1;
         return obj;
       }, {});
 
@@ -31,7 +31,6 @@ export const getAverageWeekDayFlightCount = (data) => {
   const flightCountObj = data.reduce(function(obj, v) {
     obj[v.DayOfWeek] = (obj[v.DayOfWeek] || 0) + 1;
     return obj;
-    // obj[weekDayMapping[v.DayOfWeek]] = 
   }, {});
 
   return Object.entries(flightCountObj).map((item) => {
@@ -51,7 +50,6 @@ export const getDataForFilters = (data) => {
 };
 
 export const getFilteredData = (data, filters) => {
-  console.log('filters applied are ', filters)
   const { carriers, origins, startYear, endYear } = filters;
   let result = undefined;
 

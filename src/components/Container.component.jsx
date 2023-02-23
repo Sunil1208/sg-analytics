@@ -8,18 +8,18 @@ import flightDataCSV from "../data1.csv";
 import HomePage from '../pages/Dashboard.component';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import BarChart from './charts/BarChart.component';
-import PieChart from './charts/PieChart.component';
 // import LineChart from './charts/LIneChart.component';
 import Filter from './Filter.component';
 import { PAGE_LIST } from '../constants';
 import { getDataForFilters } from '../utils/common.utils';
+import PieChartData from './charts/PieChart.component';
 
 const renderSelectedPage = (pageKey, handleReset) => {
   switch (pageKey) {
     case PAGE_LIST.FLIGHT_DISTANCE_VS_TIME.key:
       return <HomePage handleReset={handleReset} />;
     case PAGE_LIST.FLIGHT_PERCENTAGE_BY_AIRLINE.key:
-        return <PieChart handleReset={handleReset} />;
+        return <PieChartData handleReset={handleReset} />;
     case PAGE_LIST.TOTAL_FLIGHTS_BY_ORIGIN_CITY.key:
       return <BarChart handleReset={handleReset} />;
     default:
