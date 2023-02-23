@@ -19,7 +19,6 @@ const LineChart = () => {
     const color = "OrangeRed";
 
     const avgWeekdayflightCount = getAverageWeekDayFlightCount(flightData);
-    console.log("avg weekday data ", avgWeekdayflightCount);
 
     const yMinValue = d3.min(avgWeekdayflightCount, (d) => Number(d.count));
     const yMaxValue = d3.max(avgWeekdayflightCount, (d) => Number(d.count));

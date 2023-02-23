@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -8,9 +8,17 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-import Typography from '@mui/material/Typography';
-import SendIcon from '@mui/icons-material/Send';
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
+} from "@mui/material";
 import FilterListIcon from '@mui/icons-material/FilterList';
+import MultipleSelect from './forms/MultipleSelect.component';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { filteredflightDataState, filterOptionDataState, filterPopUpState, flightDataState } from '../services/atoms.services';
+import { getFilteredData } from '../utils/common.utils';
 
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -52,47 +60,178 @@ BootstrapDialogTitle.propTypes = {
 };
 
 const FilterDialog = () => {
-  const [open, setOpen] = React.useState(false);
+  const flightData = useRecoilValue(flightDataState);
+  const [filterPopUpData, setFilterPopUpData] = useRecoilState(filterPopUpState);
+  const setFilteredFlightData = useSetRecoilState(filteredflightDataState);
+  const { isOpen, appliedFilters } = filterPopUpData;
+  const filterDataOptions = useRecoilValue(filterOptionDataState);
+  const { carriers, origins , years } = filterDataOptions;
+
+  const handleChange = (e, name) => {
+    const value = e.target.value;
+    setFilterPopUpData({
+      ...filterPopUpData,
+      appliedFilters: {
+        ...filterPopUpData.appliedFilters,
+        [name]: value
+      }
+    });
+  };
 
   const handleClickOpen = () => {
-    setOpen(true);
+    setFilterPopUpData({
+      ...filterPopUpData,
+      isOpen: true
+    })
   };
   const handleClose = () => {
-    setOpen(false);
+    setFilterPopUpData({
+      ...filterPopUpData,
+      isOpen: false
+    })
   };
+
+  const handleApplyFilter = () => {
+    const filteredResults = getFilteredData(flightData, appliedFilters);
+    setFilterPopUpData({
+      ...filterPopUpData,
+      isOpen: false
+    });
+    setFilteredFlightData(filteredResults);
+    console.log("filtered Results are ", filteredResults);
+  };
+
+  const handleReset = () => {
+    setFilterPopUpData({
+      ...filterPopUpData,
+      isOpen: false,
+      appliedFilters: {
+        ...filterPopUpData.appliedFilters,
+        carriers: [],
+        origins: [],
+        startYear: "",
+        endYear: ""
+      }
+    });
+    setFilteredFlightData(undefined);
+  }
 
   return (
     <>
-      <Button variant="outlined" onClick={handleClickOpen} endIcon={<FilterListIcon />} size="small" style={{height: "3rem"}}>
+      <Button 
+        variant="outlined" 
+        onClick={handleClickOpen} 
+        endIcon={<FilterListIcon />} 
+        size="small" 
+        style={{height: "3rem"}}
+        disabled={!flightData}
+      >
         Filters
       </Button>
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        open={open}
+        open={isOpen}
       >
         <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-          Modal title
+          Filters
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          <Typography gutterBottom>
-            Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-            dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-            consectetur ac, vestibulum at eros.
-          </Typography>
-          <Typography gutterBottom>
-            Praesent commodo cursus magna, vel scelerisque nisl consectetur et.
-            Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor.
-          </Typography>
-          <Typography gutterBottom>
-            Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus
-            magna, vel scelerisque nisl consectetur et. Donec sed odio dui. Donec
-            ullamcorper nulla non metus auctor fringilla.
-          </Typography>
+          <div className="flex flex-col gap-y-2">
+              {/** Origin City */}
+              <div className="flex gap-x-2 items-center">
+                <div className="basis-1/4">Origin City: </div>
+                <div className="basis-3/4">
+                  <MultipleSelect 
+                    data={origins} 
+                    handleChange={handleChange} 
+                    value={appliedFilters.origins} 
+                    name="origins"
+                  />
+                </div>
+              </div>
+
+
+              {/** Airline */}
+              <div className="flex gap-x-2 items-center">
+                <div className="basis-1/4">Airline: </div>
+                <div className="basis-3/4">
+                  <MultipleSelect 
+                    data={carriers} 
+                    handleChange={handleChange}
+                    value={appliedFilters.carriers}
+                    name="carriers"
+                  />
+                </div>
+              </div>
+
+
+              {/** Date */}
+              <div className="flex gap-x-2 items-center">
+                <div className="basis-1/4">Date: </div>
+                <div className="basis-3/4">
+                  <div className="flex justify-content gap-x-2">
+                    {/** Start Year */}
+                      <FormControl sx={{ m: 0, minWidth: 120 }} size="small">
+                      <InputLabel id="demo-select-small">Start</InputLabel>
+                      <Select
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        value={appliedFilters.startYear}
+                        label="Start"
+                        onChange={(e) => {handleChange(e, "startYear")}}
+                        // disabled={!years || (years && years.length === 1)}
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        {
+                          years && years.map((year, idx) => {
+                            return(
+                              <MenuItem value={year} key={`year-${year}-${idx}`}>{year}</MenuItem>
+                            )
+                          })
+                        }
+                      </Select>
+                    </FormControl>
+
+                      {/** End Year */}
+                      <FormControl sx={{ m: 0, minWidth: 120 }} size="small">
+                      <InputLabel id="demo-select-small">End</InputLabel>
+                      <Select
+                        labelId="demo-select-small"
+                        id="demo-select-small"
+                        value={appliedFilters.endYear}
+                        label="End"
+                        onChange={(e) => {handleChange(e, "endYear")}}
+                        disabled={!years || (years && years.length === 1)}
+                      >
+                        <MenuItem value="">
+                          <em>None</em>
+                        </MenuItem>
+                        {
+                          years && years.map((year, idx) => {
+                            return(
+                              <MenuItem value={year} key={`year2-${year}-${idx}`}>{year}</MenuItem>
+                            )
+                          })
+                        }
+                      </Select>
+                    </FormControl>
+                  </div>
+                </div>
+              </div>
+          </div>
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose}>
-            Save changes
+            Cancel
+          </Button>
+          <Button autoFocus onClick={handleApplyFilter}>
+            Apply
+          </Button>
+          <Button autoFocus onClick={handleReset}>
+            Reset
           </Button>
         </DialogActions>
       </BootstrapDialog>

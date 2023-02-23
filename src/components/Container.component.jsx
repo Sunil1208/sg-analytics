@@ -1,20 +1,20 @@
 import React, { useEffect } from 'react';
-import { flightDataState, loaderState, selectedPageState } from '../services/atoms.services';
+import { filteredflightDataState, filterOptionDataState, flightDataState, loaderState, selectedPageState } from '../services/atoms.services';
 import { readString } from 'react-papaparse';
 
 import flightDataCSV from "../data1.csv";
 
 
 import HomePage from '../pages/Dashboard.component';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import BarChart from './charts/BarChart.component';
 import PieChart from './charts/PieChart.component';
 // import LineChart from './charts/LIneChart.component';
 import Filter from './Filter.component';
 import { PAGE_LIST } from '../constants';
+import { getDataForFilters } from '../utils/common.utils';
 
 const renderSelectedPage = (pageKey) => {
-  console.log("apage key is ", pageKey)
   switch (pageKey) {
     case PAGE_LIST.FLIGHT_DISTANCE_VS_TIME.key:
       return <HomePage />;
@@ -27,10 +27,11 @@ const renderSelectedPage = (pageKey) => {
   }
 };
 
-
 const Container = () => {
   const [flightData, setFlightData] = useRecoilState(flightDataState);
+  const filteredFlightData = useRecoilValue(filteredflightDataState);
   const selectedPage = useRecoilValue(selectedPageState);
+  const setfilterOptionData = useSetRecoilState(filterOptionDataState);
   const [, setLoading] = useRecoilState(loaderState);
 
   useEffect(() => {
@@ -41,6 +42,8 @@ const Container = () => {
         complete: (results, file) => {
           // console.log('Parsing complete:', results, file);
           setFlightData(results.data);
+          const filterOptionData = getDataForFilters(results.data);
+          setfilterOptionData(filterOptionData);
           setLoading(false);
         },
         download: true,
@@ -64,7 +67,7 @@ const Container = () => {
       <h1 className="text-3xl text-center font-bold underline">SG Analytics</h1>
       <Filter />
       {
-        flightData && (selectedPageView)
+        (filteredFlightData || flightData) && (selectedPageView)
       }
     </div>
   )

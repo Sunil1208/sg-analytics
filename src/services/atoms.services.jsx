@@ -11,15 +11,34 @@ export const flightDataState = atom({
     default: undefined
 });
 
+export const filteredflightDataState = atom({
+    key: "filteredflightDataState",
+    default: undefined
+});
+
 export const filterPopUpState = atom({
     key: "filterPopUpState",
     default: {
         isOpen: false,
-        selectedItem: undefined
+        appliedFilters: {
+            carriers: [],
+            origins: [],
+            startYear: "",
+            endYear: ""
+        }
     }
 });
 
 export const selectedPageState = atom({
     key: "selectedPageState",
     default: PAGE_LIST.FLIGHT_DISTANCE_VS_TIME.key
+});
+
+export const filterOptionDataState = atom({
+    key: "filterOptionDataState",
+    default: {
+        origins: undefined,
+        carriers: undefined,
+        years: undefined
+    }
 });

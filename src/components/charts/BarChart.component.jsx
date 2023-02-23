@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import { flightDataState } from '../../services/atoms.services';
+import { filteredflightDataState, flightDataState } from '../../services/atoms.services';
 import { getOriginCount } from '../../utils/common.utils';
 import * as d3 from "d3";
 
@@ -15,8 +15,11 @@ const subtitleLabel = "Total number of flights by origin city";
 export const BarChart = () => {
 
     const flightData = useRecoilValue(flightDataState);
+    const filteredFlightData = useRecoilValue(filteredflightDataState);
 
-    const originCount = getOriginCount(flightData);
+    const data = filteredFlightData ? filteredFlightData : flightData;
+
+    const originCount = getOriginCount(data);
 
     const bottomAxisLabel = "Orign City";
     const leftAxisLabel = "Number of flights";

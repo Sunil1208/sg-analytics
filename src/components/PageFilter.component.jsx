@@ -36,7 +36,6 @@ const PageFilter = () => {
   const [selectedPage, setSelectedPage] = useRecoilState(selectedPageState);
 
   const handleChange = (event) => {
-    console.log("target value is ", event.target.value)
     const {
       target: { value },
     } = event;
@@ -63,7 +62,6 @@ const PageFilter = () => {
         >
           {
             Object.entries(PAGE_LIST).map((item, idx) => {
-                console.log("item is ", item)
                 const keyName = item[1].key;
                 const keyLabel = item[1].label;
                 return (

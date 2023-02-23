@@ -1,16 +1,8 @@
-import { useCallback, useState, useEffect } from "react";
 import * as d3 from "d3";
 import { useRecoilValue } from "recoil";
-import { flightDataState } from "../../services/atoms.services";
-import Tooltip from "../Tooltip.component";
-import Legend from "../Legend.component";
+import { filteredflightDataState, flightDataState } from "../../services/atoms.services";
 
 import "../../styles/styles.common.css";
-import { useData } from "../../hooks/common.hooks";
-
-// AirtTime
-
-// Distance
 
 const titleLabel = "Flight Distance vs Flight Time";
 const subtitleLabel = "Relationship between flight time and flight distance";
@@ -18,21 +10,10 @@ const subtitleLabel = "Relationship between flight time and flight distance";
 
 
 const ScatterPlot = () => {
-    // const myData = useData();
     const flightData = useRecoilValue(flightDataState);
-    // console.log("flight Data set is ", flightDataSet)
+    const filteredFlightData = useRecoilValue(filteredflightDataState);
 
-    // useEffect(() => {
-    //     console.log("myData is ", myData);
-    // }, []);
-
-    // const getflightData = () => {
-    //     return flightDataSet.map((data) => [data.AirTime, data.Distance])
-    // };
-
-    // const flightData = getflightData();
-
-    // console.log("flightData is ", flightData)
+    const data = filteredFlightData ? filteredFlightData : flightData;
 
     const width = 900;
     const height = 450;
@@ -50,31 +31,18 @@ const xValue = (d) => Number(d.Distance);
 
 const xScale = d3
     .scaleLinear()
-    .domain(d3.extent(flightData, xValue))
+    .domain(d3.extent(data, xValue))
     .range([0, innerWidth])
     .nice()
 
     
     const yScale = d3
     .scaleLinear()
-    .domain(d3.extent(flightData, yValue))
+    .domain(d3.extent(data, yValue))
     .range([innerHeight, 0])
     .nice();
     
     const place = (d) => d.Place;
-  const doping = (d) => d.Doping;
-
-
-    // const [hoveredValue, setHoveredValue] = useState(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  const handleMouseMove = useCallback(
-    (event) => {
-      const { clientX, clientY } = event;
-      setMousePosition({ x: clientX, y: clientY });
-    },
-    [setMousePosition]
-  );
 
     return(
         <div>
@@ -102,15 +70,12 @@ const xScale = d3
               />
             </g>
             <Marks
-              data={flightData}
+              data={data}
               xScale={xScale}
               xValue={xValue}
               yScale={yScale}
               yValue={yValue}
               place={place}
-              doping={doping}
-            //   setHoveredValue={setHoveredValue}
-            //   handleMouseMove={handleMouseMove}
               circleRadius={3}
             />
           </g>
@@ -121,10 +86,10 @@ const xScale = d3
 };
 
 const AxisLeft = ({ yScale, innerWidth, yAxisTickFormat, tickOffset }) =>
-    yScale.ticks(10).map((tickValue) => {
+    yScale.ticks(10).map((tickValue, idx) => {
         return (
         <g
-        key={tickValue}
+        key={tickValue + idx + "bottom"}
         className="tick"
         transform={`translate(0,${yScale(tickValue)})`}
         >
@@ -136,9 +101,9 @@ const AxisLeft = ({ yScale, innerWidth, yAxisTickFormat, tickOffset }) =>
   )});
 
   const AxisBottom = ({ xScale, innerHeight, tickOffset }) =>
-    xScale.ticks().map((tickValue) => (
+    xScale.ticks().map((tickValue, idx) => (
         <g
-        key={tickValue}
+        key={tickValue + idx + "bottom"}
         className="tick"
         transform={`translate(${xScale(tickValue)},0)`}
         >
@@ -160,18 +125,12 @@ const AxisLeft = ({ yScale, innerWidth, yAxisTickFormat, tickOffset }) =>
     yScale,
     yValue,
     place,
-    doping,
-    setHoveredValue,
-    handleMouseMove,
     circleRadius
   }) =>
     data.map((d, i) => {
-        // console.log("d is ", d)
-        // console.log("xvalue is ", xValue(d), xScale(xValue(d)))
-        // console.log("yvalue is ", yValue(d))
       return (<>
         <circle
-          key={place(d)}
+          key={`${place(d)}-${i}-scatter`}
           id={"place" + place(d)}
           data-xvalue={xValue(d)}
           data-yvalue={yValue(d)}
@@ -179,11 +138,7 @@ const AxisLeft = ({ yScale, innerWidth, yAxisTickFormat, tickOffset }) =>
           cx={xScale(xValue(d))}
           cy={yScale(yValue(d))}
           r={circleRadius}
-        //   fill={doping(d) ? "#E25A42" : "#6BBBA1"}
           fill={"#E25A42"}
-        //   onMouseEnter={() => setHoveredValue(d)}
-        //   onMouseLeave={() => setHoveredValue(null)}
-        //   onMouseMove={handleMouseMove}
         />
       </>)
       });

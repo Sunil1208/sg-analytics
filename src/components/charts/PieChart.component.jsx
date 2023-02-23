@@ -1,6 +1,6 @@
 import React from "react";
 import Pie from "./common/PieChartSVG.component";
-import { flightDataState } from "../../services/atoms.services";
+import { filteredflightDataState, flightDataState } from "../../services/atoms.services";
 import { useRecoilValue } from "recoil";
 import { getFlightCount } from "../../utils/common.utils";
 
@@ -10,7 +10,10 @@ const subtitleLabel = "Percentage of flights by airline";
 
 const PieChart = () => {
     const flightData = useRecoilValue(flightDataState);
-    const totalFlightCount = flightData.length;
+    const filteredFlightData = useRecoilValue(filteredflightDataState);
+    const data = filteredFlightData ? filteredFlightData : flightData;
+
+    const totalFlightCount = data.length;
 
     const getflightPercentage = (data, totalCount) => {
         return data.map((item) => {
@@ -18,7 +21,7 @@ const PieChart = () => {
         })
     };
 
-    const flightCount = getFlightCount(flightData);
+    const flightCount = getFlightCount(data);
     const flightPercentageData = getflightPercentage(flightCount, totalFlightCount);
 
   return (
