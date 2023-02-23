@@ -1,17 +1,19 @@
-const Legend = ({ innerWidth, innerHeight }) => (
-    <div
+const Legend = ({ innerWidth, innerHeight, data }) => {
+    return (data) ? (<div
       id="legend"
-      style={{ left: `${innerWidth * 0.82}px`, top: `${innerHeight * 0.32}px` }}
+      style={{ left: `${innerWidth * 0.95}px`, top: `${innerHeight * 0.22}px` }}
     >
-      <div id="doping-label">
-        <div style={{ paddingRight: "5px" }}>Riders with doping allegations</div>
-        <div id="doping-dot"></div>
-      </div>
-      <div id="clean-label">
-        <div style={{ paddingRight: "5px" }}>No doping allegations</div>
-        <div id="clean-dot"></div>
-      </div>
-    </div>
-  );
+      {
+        data && data.map((item) => {
+          return(
+            <div id="clean-label">
+              <div style={{ paddingRight: "5px" }}>{item.label}:</div>
+              <div>{item.value}</div>
+            </div>
+          )
+        })
+      }
+    </div>) : null;
+    };
 
 export default Legend;

@@ -6,6 +6,7 @@ import * as d3 from "d3";
 
 
 import "../../styles/styles.common.css"
+import Legend from '../Legend.component';
 
 
 const titleLabel = "Flights by origin city";
@@ -24,7 +25,7 @@ export const BarChart = ({handleReset}) => {
     const leftAxisLabel = "Number of flights";
 
     const width = 900;
-  const height = 450;
+    const height = 450;
     const margin = { top: 20, right: 20, bottom: 20, left: 100 };
     const innerHeight = height - margin.top - margin.bottom;
     const innerWidth = width - margin.right - margin.left;
@@ -46,6 +47,13 @@ export const BarChart = ({handleReset}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
+    const legendData = [
+      {
+        label: "Total Flight Count",
+        value: data.length
+      }
+    ];
+
 
   return (
     <div>
@@ -54,6 +62,7 @@ export const BarChart = ({handleReset}) => {
         <div id="subtitle">{subtitleLabel}</div>
         <div id="left-axis-label">{leftAxisLabel}</div>
         <div id="bottom-axis-label">{bottomAxisLabel}</div>
+        <Legend innerWidth={innerWidth} innerHeight={innerHeight} data={legendData}/>
 
         <svg width={width} height={height}>
       <g transform={`translate(${margin.left}, ${margin.top})`}>

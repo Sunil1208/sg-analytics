@@ -3,6 +3,7 @@ import * as d3 from 'd3';
 import { filteredflightDataState, flightDataState } from '../../services/atoms.services';
 import { useRecoilValue } from 'recoil';
 import { getFlightCount } from '../../utils/common.utils';
+import Legend from '../Legend.component';
 
 const titleLabel = "Flights by airline";
 const subtitleLabel = "Percentage of flights by airline";
@@ -15,7 +16,6 @@ function PieChartData(props) {
 
   const getflightPercentage = (data, totalCount) => {
     return data.map((item) => {
-      console.log("item is ", item)
       return {airline: item.flight, percentage: parseFloat(((item.count/totalCount)*100).toFixed(2))}
     })
 };
@@ -24,7 +24,17 @@ function PieChartData(props) {
   const flightCount = getFlightCount(data);
   const flightPercentageData = getflightPercentage(flightCount, totalFlightCount);
 
-  console.log("flilght percetage data is ", flightPercentageData);
+  const flightCountLegendData = flightCount.map((item) => {
+    return {label: item.flight, value: item.count}
+  })
+
+  const legendData = [
+    {
+      label: "Total Flight Count",
+      value: data.length
+    },
+    ...flightCountLegendData
+  ];
 
 
   const outerRadius = 210;
@@ -36,6 +46,8 @@ function PieChartData(props) {
 
   const width = 2 * outerRadius + margin.left + margin.right;
   const height = 2 * outerRadius + margin.top + margin.bottom;
+  const innerHeight = height - margin.top - margin.bottom;
+  const innerWidth = width * 1.7 - margin.right - margin.left;
 
   const colorScale = d3     
     .scaleSequential()      
@@ -105,6 +117,7 @@ function PieChartData(props) {
         <div id="viz-container">
               <div id="title">{titleLabel}</div>
               <div id="subtitle">{subtitleLabel}</div>
+              <Legend innerWidth={innerWidth} innerHeight={innerHeight} data={legendData}/>
               <div className="flex justify-center">
                 <div id="pie-container" />
               </div>
