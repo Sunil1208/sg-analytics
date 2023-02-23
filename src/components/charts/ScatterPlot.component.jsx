@@ -118,7 +118,7 @@ const AxisLeft = ({ yScale, innerWidth, yAxisTickFormat, tickOffset }) =>
         transform={`translate(0,${yScale(tickValue)})`}
         >
         <line x2={innerWidth} stroke="#f1f2f3" />
-        <text style={{ textAnchor: "end" }} x={-tickOffset} dy=".32em">
+        <text style={{ textAnchor: "end", fill: "#030303" }} x={-tickOffset} dy=".32em">
             {tickValue}
         </text>
         </g>
@@ -133,7 +133,7 @@ const AxisLeft = ({ yScale, innerWidth, yAxisTickFormat, tickOffset }) =>
         >
         <line y2={innerHeight} stroke="#f1f2f3" />
         <text
-            style={{ textAnchor: "middle" }}
+            style={{ textAnchor: "middle", fill: "#030303" }}
             dy=".71em"
             y={innerHeight + tickOffset}
         >

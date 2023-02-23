@@ -20,7 +20,7 @@ export const BarChart = ({handleReset}) => {
 
     const originCount = getOriginCount(data);
 
-    const bottomAxisLabel = "Orign City";
+    const bottomAxisLabel = "Origin City";
     const leftAxisLabel = "Number of flights";
 
     const width = 900;
@@ -63,7 +63,7 @@ export const BarChart = ({handleReset}) => {
             <text
               dy=".71em"
               y={innerHeight + 3}
-              style={{ textAnchor: "middle" }}
+              style={{ textAnchor: "middle", fill: "#030303" }}
             >
               {tickValue}
             </text>
@@ -74,20 +74,24 @@ export const BarChart = ({handleReset}) => {
             key={tickValue}
             dy=".32em"
             x={-3}
-            style={{ textAnchor: "end" }}
+            style={{ textAnchor: "end", fill: "#030303" }}
             y={yScale(tickValue) + yScale.bandwidth() / 2}
           >
             {tickValue}
           </text>
         ))}
-        {originCount.map((d) => (
+        {originCount.map((d, i) => (
           <rect
-            key={d.origin}
-            x={0}
-            y={yScale(d.origin)}
-            width={xScale(d.count)}
-            height={yScale.bandwidth()}
-          />
+              key={d.origin}
+              x={0}
+              y={yScale(d.origin)}
+              width={xScale(d.count)}
+              height={yScale.bandwidth()}
+              style={{
+                fill:"rgb(197, 197, 197)", strokeWidth:1, stroke: "rgb(0, 0, 0)"
+              }}
+            
+            />
         ))}
       </g>
     </svg>
